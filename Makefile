@@ -24,7 +24,7 @@ third_party_all: third_party_core \
 		 gtest \
 		 iftop \
 		 eigen \
-                 boost-headerXS
+                 boost-header
 
 path:
 	mkdir -p $(THIRD_PARTY_SRC)
@@ -110,7 +110,7 @@ boost-header: $(BOOST_INCLUDE)
 
 $(BOOST_INCLUDE): $(BOOST_SRC)
 	tar jxf $< -C $(THIRD_PARTY_SRC)
-	cp -r $(BOOST_SRC/boost $(THIRD_PARTY_INCLUDE)/include
+	cp -r $(BOOST_SRC)/boost $(THIRD_PARTY_INCLUDE)/include
 
 $(BOOST_SRC):
 	wget $(BOOST_HOST)/$(@F) -O $@
