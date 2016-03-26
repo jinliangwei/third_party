@@ -1,20 +1,17 @@
 THIRD_PARTY_HOST = http://www.cs.cmu.edu/~jinlianw/third_party
-BOOST_HOST = http://downloads.sourceforge.net/project/boost/boost/1.56.0
 THIRD_PARTY := $(shell readlink $(dir $(lastword $(MAKEFILE_LIST))) -f)
 THIRD_PARTY_SRC := $(THIRD_PARTY)/src
 THIRD_PARTY_LIB := $(THIRD_PARTY)/lib
+THIRD_PARTY_BIN := $(THIRD_PARTY)/bin
+THIRD_PARTY_SHARE := $(THIRD_PARTY)/share
 THIRD_PARTY_INCLUDE := $(THIRD_PARTY)/include
 
 third_party_core: path \
                   gflags \
                   glog \
-                  zeromq \
                   gperftools \
                   cuckoo \
-                  leveldb \
-                  libconfig \
-                  yaml-cpp \
-                  leveldb \
+		  yaml-cpp \
                   snappy \
 		  float16_compressor
 
@@ -22,17 +19,27 @@ third_party_all: third_party_core \
                  sparsehash \
                  oprofile \
 		 gtest \
+                 zeromq \
 		 iftop \
 		 eigen \
-                 boost-headerXS
+		 rapidjson \
+                 leveldb \
+                 libconfig \
+                 boost-header
 
 path:
 	mkdir -p $(THIRD_PARTY_SRC)
 	mkdir -p $(THIRD_PARTY_LIB)
 	mkdir -p $(THIRD_PARTY_INCLUDE)
 
+clean:
+	rm -rf $(THIRD_PARTY_SRC)
+	rm -rf $(THIRD_PARTY_LIB)
+	rm -rf $(THIRD_PARTY_BIN)
+	rm -rf $(THIRD_PARTY_SHARE)
+	rm -rf $(THIRD_PARTY_INCLUDE)
 
-.PHONY: third_party_core third_party_all
+.PHONY: third_party_core third_party_all clean
 
 # ===================== gflags ===================
 
@@ -103,17 +110,17 @@ $(ZMQ_SRC):
 
 # ==================== boost ====================
 
-BOOST_SRC = $(THIRD_PARTY_SRC)/boost_1_56_0.tar.bz2
+BOOST_SRC = $(THIRD_PARTY_SRC)/boost_1_59_0.tar.gz
 BOOST_INCLUDE = $(THIRD_PARTY_INCLUDE)/boost
 
 boost-header: $(BOOST_INCLUDE)
 
 $(BOOST_INCLUDE): $(BOOST_SRC)
-	tar jxf $< -C $(THIRD_PARTY_SRC)
-	cp -r $(BOOST_SRC/boost $(THIRD_PARTY_INCLUDE)/include
+	tar zxf $< -C $(THIRD_PARTY_SRC)
+	cp -r $(THIRD_PARTY_SRC)/boost_1_59_0/boost $(THIRD_PARTY_INCLUDE)/boost
 
 $(BOOST_SRC):
-	wget $(BOOST_HOST)/$(@F) -O $@
+	wget $(THIRD_PARTY_HOST)/$(@F) -O $@
 
 # ================== gperftools =================
 
@@ -226,7 +233,7 @@ yaml-cpp: boost-header $(YAMLCPP_LIB)
 $(YAMLCPP_LIB): $(YAMLCPP_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $<)); \
-	make -f $(YAMLCPP_MK) BOOST_PREFIX=$(THIRD_PARTY) TARGET=$@; \
+	make -f $(YAMLCPP_MK) BOOST_PREFIX=$(THIRD_PARTY_INCLUDE) TARGET=$@; \
 	cp -r include/* $(THIRD_PARTY_INCLUDE)/
 
 $(YAMLCPP_SRC):
@@ -293,4 +300,17 @@ $(FLOAT16_COMPRESSOR_INCLUDE): $(FLOAT16_COMPRESSOR_SRC)
 	cp $(FLOAT16_COMPRESSOR_SRC) $(THIRD_PARTY_INCLUDE)/
 
 $(FLOAT16_COMPRESSOR_SRC):
+	wget $(THIRD_PARTY_HOST)/$(@F) -O $@
+
+# ===================== RapidJson =====================
+RAPID_JSON_SRC = $(THIRD_PARTY_SRC)/rapidjson.tar.gz
+RAPID_JSON_INCLUDE = $(THIRD_PARTY_INCLUDE)/rapidjson
+
+rapid_json: $(RAPID_JSON_INCLUDE)
+
+$(RAPID_JSON_INCLUDE): $(RAPID_JSON_SRC)
+	tar xzf $< -C $(THIRD_PARTY_SRC)
+	cp -r $(THIRD_PARTY_SRC)/rapidjson/include/rapidjson $(THIRD_PARTY_INCLUDE)/
+
+$(RAPID_JSON_SRC):
 	wget $(THIRD_PARTY_HOST)/$(@F) -O $@
