@@ -13,7 +13,8 @@ third_party_core: path \
                   cuckoo \
 		  yaml-cpp \
                   snappy \
-		  float16_compressor
+		  float16_compressor \
+		  llvm
 
 third_party_all: third_party_core \
                  sparsehash \
@@ -314,3 +315,21 @@ $(RAPID_JSON_INCLUDE): $(RAPID_JSON_SRC)
 
 $(RAPID_JSON_SRC):
 	wget $(THIRD_PARTY_HOST)/$(@F) -O $@
+
+# ===================== LLVM =====================
+LLVM3.7.1_SRC = $(THIRD_PARTY_SRC)/llvm-3.7.1.src.tar.xz
+LLVM3.7.1_INCLUDE = $(THIRD_PARTY_INCLUDE)/llvm
+
+llvm: $(LLVM3.7.1_INCLUDE)
+
+$(LLVM3.7.1_INCLUDE): $(LLVM3.7.1_SRC)
+	tar xJf $< -C $(THIRD_PARTY_SRC)
+	mkdir -p $(THIRD_PARTY_SRC)/llvm3.7.1
+	cd $(THIRD_PARTY_SRC)/llvm3.7.1; \
+	cmake $(THIRD_PARTY_SRC)/llvm-3.7.1.src; \
+	cmake --build .
+	cp -r $(THIRD_PARTY_SRC)/llvm3.7.1/include/llvm $(THIRD_PARTY_INCLUDE)/
+	cp -r $(THIRD_PARTY_SRC)/llvm3.7.1/lib/* $(THIRD_PARTY_LIB)/
+
+$(LLVM3.7.1_SRC):
+	wget http://llvm.org/releases/3.7.1/llvm-3.7.1.src.tar.xz -O $@
