@@ -332,6 +332,7 @@ $(LLVM3.7.1_INCLUDE): $(LLVM3.7.1_SRC)
 	cp -r $(THIRD_PARTY_SRC)/llvm-3.7.1.src/include/llvm-c $(THIRD_PARTY_INCLUDE)/
 	cp -r $(THIRD_PARTY_SRC)/llvm3.7.1/include/llvm/* $(THIRD_PARTY_INCLUDE)/llvm
 	cp -r $(THIRD_PARTY_SRC)/llvm3.7.1/lib/* $(THIRD_PARTY_LIB)/
+	cp -r $(THIRD_PARTY_SRC)/llvm3.7.1/bin/* $(THIRD_PARTY_BIN)/
 
 $(LLVM3.7.1_SRC):
 	wget http://llvm.org/releases/3.7.1/llvm-3.7.1.src.tar.xz -O $@
