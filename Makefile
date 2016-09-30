@@ -40,7 +40,7 @@ clean:
 	rm -rf $(THIRD_PARTY_SHARE)
 	rm -rf $(THIRD_PARTY_INCLUDE)
 
-.PHONY: third_party_core third_party_all clean
+.PHONY: third_party_core third_party_all clean gflags
 
 # ===================== gflags ===================
 
@@ -65,10 +65,10 @@ GLOG_LIB = $(THIRD_PARTY_LIB)/libglog.so
 
 glog: $(GLOG_LIB)
 
-$(GLOG_LIB): $(GLOG_SRC)
-	tar zxf $< -C $(THIRD_PARTY_SRC)
-	cd $(basename $(basename $<)); \
-	./configure --prefix=$(THIRD_PARTY); \
+$(GLOG_LIB): gflags $(GLOG_SRC)
+	tar zxf $(GLOG_SRC) -C $(THIRD_PARTY_SRC)
+	cd $(basename $(basename $(GLOG_SRC))); \
+	./configure --prefix=$(THIRD_PARTY) --with-gflags=$(THIRD_PARTY); \
 	make install
 
 $(GLOG_SRC):
