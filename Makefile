@@ -14,12 +14,12 @@ third_party_core: path \
 		  yaml-cpp \
                   snappy \
 		  float16_compressor \
-		  llvm
+		  llvm \
+	          gtest
 
 third_party_all: third_party_core \
                  sparsehash \
                  oprofile \
-		 gtest \
                  zeromq \
 		 iftop \
 		 eigen \
@@ -77,17 +77,17 @@ $(GLOG_SRC):
 # ===================== gtest ====================
 
 GTEST_SRC = $(THIRD_PARTY_SRC)/gtest-1.7.0.tar
-GTEST_LIB = $(THIRD_PARTY_LIB)/libgtest_main.a
+GTEST_LIB = $(THIRD_PARTY_LIB)/libgtest.a
 
 gtest: $(GTEST_LIB)
 
 $(GTEST_LIB): $(GTEST_SRC)
 	tar xf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $<)/make; \
-	make; \
+	make gtest; \
 	./sample1_unittest; \
 	cp -r ../include/* $(THIRD_PARTY_INCLUDE)/; \
-	cp gtest_main.a $@
+	cp gtest.a $@
 
 $(GTEST_SRC):
 	wget $(THIRD_PARTY_HOST)/$(@F) -O $@
