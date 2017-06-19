@@ -14,19 +14,21 @@ third_party_core: path \
 		  yaml-cpp \
                   snappy \
 		  float16_compressor \
-		  llvm \
-	          gtest
+	          gtest \
+                  zeromq \
+		  eigen \
+                  leveldb
 
 third_party_all: third_party_core \
                  sparsehash \
                  oprofile \
-                 zeromq \
 		 iftop \
 		 eigen \
 		 rapidjson \
                  leveldb \
                  libconfig \
-                 boost-header
+                 boost-header \
+		  llvm	
 
 path:
 	mkdir -p $(THIRD_PARTY_SRC)
