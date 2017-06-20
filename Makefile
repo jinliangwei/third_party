@@ -11,10 +11,10 @@ third_party_core: path \
                   glog \
                   gperftools \
                   cuckoo \
+		  boost \
 		  yaml-cpp \
                   snappy \
 		  float16_compressor \
-	          gtest \
                   zeromq \
 		  eigen \
                   leveldb
@@ -23,12 +23,10 @@ third_party_all: third_party_core \
                  sparsehash \
                  oprofile \
 		 iftop \
-		 eigen \
 		 rapidjson \
-                 leveldb \
                  libconfig \
-                 boost-header \
-		  llvm	
+	          gtest \
+		  llvm
 
 path:
 	mkdir -p $(THIRD_PARTY_SRC)
@@ -116,11 +114,13 @@ $(ZMQ_SRC):
 BOOST_SRC = $(THIRD_PARTY_SRC)/boost_1_59_0.tar.gz
 BOOST_INCLUDE = $(THIRD_PARTY_INCLUDE)/boost
 
-boost-header: $(BOOST_INCLUDE)
+boost: $(BOOST_INCLUDE)
 
 $(BOOST_INCLUDE): $(BOOST_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
-	cp -r $(THIRD_PARTY_SRC)/boost_1_59_0/boost $(THIRD_PARTY_INCLUDE)/boost
+	cd $(THIRD_PARTY_SRC)/boost_1_59_0/; \
+	./bootstrap.sh --with-libraries=system,thread --prefix=$(THIRD_PARTY); \
+	./b2 install
 
 $(BOOST_SRC):
 	wget $(THIRD_PARTY_HOST)/$(@F) -O $@
@@ -231,12 +231,12 @@ YAMLCPP_SRC = $(THIRD_PARTY_SRC)/yaml-cpp-0.5.1.tar.gz
 YAMLCPP_MK = $(THIRD_PARTY_SRC)/yaml-cpp.mk
 YAMLCPP_LIB = $(THIRD_PARTY_LIB)/libyaml-cpp.a
 
-yaml-cpp: boost-header $(YAMLCPP_LIB)
+yaml-cpp: boost $(YAMLCPP_LIB)
 
 $(YAMLCPP_LIB): $(YAMLCPP_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $<)); \
-	make -f $(YAMLCPP_MK) BOOST_PREFIX=$(THIRD_PARTY_INCLUDE) TARGET=$@; \
+	make -f $(YAMLCPP_MK) BOOST_PREFIX=$(THIRD_PARTY) TARGET=$@; \
 	cp -r include/* $(THIRD_PARTY_INCLUDE)/
 
 $(YAMLCPP_SRC):
